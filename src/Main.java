@@ -12,19 +12,22 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 import java.util.regex.Pattern;
 
 public class Main implements KeyListener {
 
-    HashMap commands = new HashMap();
-    HashMap winKeys = new HashMap();
-    HashMap macKeys = new HashMap();
-    HashMap tags = new HashMap();
-    HashMap macCmdPress = new HashMap();
-    HashMap macOptPress = new HashMap();
-    HashMap macCtrlPress = new HashMap();
-    HashMap macShiftPress = new HashMap();
+    List<String> commands = new ArrayList<>();
+    List<String> winKeys = new ArrayList<>();
+    List<String> macKeys = new ArrayList<>();
+    List<String> tags = new ArrayList<>();
+    List<String> tagsList = new ArrayList<>();
+    List <Boolean> macCmdPress = new ArrayList<>();
+    List<Boolean> macOptPress = new ArrayList<>();
+    List<Boolean> macCtrlPress = new ArrayList<>();
+    List<Boolean> macShiftPress = new ArrayList<>();
 
 
     Main(){
@@ -89,38 +92,46 @@ public class Main implements KeyListener {
                     String macKey = element.getElementsByTagName("MacKey").item(0).getTextContent();
                     String tag = element.getElementsByTagName("Tags").item(0).getTextContent();
                     // wszystkie parametry z XML do hashMaps
-                    commands.put(i, command);
-                    winKeys.put(i, winKey);
-                    macKeys.put(i, macKey);
-                    tags.put(i, tag);
+                    commands.add(command);
+                    winKeys.add(winKey);
+                    macKeys.add(macKey);
+                    tags.add(tag);
+                    boolean tagUnique = true;
+                    for (int a=0; a < tagsList.size(); a++){
+                        if (Objects.equals(tagsList.get(a), tag)){
+                            tagUnique = false;
+                        }
+                    }
+                    if (tagUnique){
+                        tagsList.add(tag); // jeśli to pierwsze wystąpienie tego taga, to dodaj go do mapy
+                    }
 
                     // modyfikatory
                     if (pCmdPress.matcher(macKey).matches()){
-                        macCmdPress.put(i, true);
+                        macCmdPress.add(true);
                     } else {
-                        macCmdPress.put(i, false);
+                        macCmdPress.add(false);
                     }
                     if (pShiftPress.matcher(macKey).matches()){
-                        macShiftPress.put(i, true);
+                        macShiftPress.add(true);
                     } else {
-                        macShiftPress.put(i, false);
+                        macShiftPress.add(false);
                     }
                     if (pOptPress.matcher(macKey).matches()){
-                        macOptPress.put(i, true);
+                        macOptPress.add( true);
                     } else {
-                        macOptPress.put(i, false);
+                        macOptPress.add(false);
                     }
                     if (pControlPress.matcher(macKey).matches()){
-                        macCtrlPress.put(i, true);
+                        macCtrlPress.add(true);
                     } else {
-                        macCtrlPress.put(i, false);
+                        macCtrlPress.add(false);
                     }
 
                 }
             }
-        } catch (SAXException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
+
+        } catch (SAXException | IOException e) {
             throw new RuntimeException(e);
         }
     }
