@@ -16,12 +16,10 @@ import java.util.List;
 
 public class Main implements KeyListener {
 
-
-    List<String> commands = new ArrayList<>();
-    List<String> winKeys = new ArrayList<>();
-    List<String> macKeys = new ArrayList<>();
     List<String> tags = new ArrayList<>();
     List<String> tagsList = new ArrayList<>();
+
+    List<JCheckBox> tagsCheckboxList = new ArrayList<>();
 
     String[] keyNrAscii = new String[256];
 
@@ -29,48 +27,124 @@ public class Main implements KeyListener {
     String[] commandsTable;
     String[] keyMacTable;
     String[] keyWinTable;
+    String[] tagsTable;
     int currentGuessId=0;
 
-    JLabel jLabel = new JLabel("HELLO");
-    JLabel jLabel1 = new JLabel("");
+    JFrame window;
+    JPanel panel;
+    JLabel jLabelTitle = new JLabel("Witaj w programie do nauki skrótów ProTools-a!");
+    JLabel jLabelInstruction = new JLabel("Wybierz kategorie skrótów, które chcesz ćwiczyć:");
     GridBagConstraints constraints = new GridBagConstraints();
+    JButton buttonShow;
 
 
     Main(){
 
-        JFrame window = new JFrame();
-        JPanel panel = new JPanel();
-        JRadioButton radioInternalshortcuts = new JRadioButton();
-        JRadioButton radioLoadFile = new JRadioButton();
-        ButtonGroup buttonGroup = new ButtonGroup();
+        window = new JFrame();
+        panel = new JPanel();
+        JButton buttonStartSkip = new JButton("Start!");
+        JButton buttonExit = new JButton("Wyjdź!");
+        buttonShow = new JButton("");
+        buttonShow.setFocusable(false);
+        buttonShow.setVisible(false);
 
         window.setLocationRelativeTo(null);
         window.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         window.add(panel);
+        window.setTitle("Protools shortcuts trainer 2024.04");
+
+
+
 
         panel.setLayout(new GridBagLayout());
         panel.setPreferredSize(new Dimension(500,500));
-        setConstraintsForLayout(constraints, 0,0);
-        panel.add(jLabel, constraints);
-        setConstraintsForLayout(constraints, 0,1);
-        panel.add(jLabel1, constraints);
+        setConstraintsForLayout(constraints,0,0);
+        constraints.gridwidth = 3;
+        constraints.weighty = 2;
+
+        panel.add(jLabelTitle, constraints);
+        constraints.weighty = 1;
+        panel.add(jLabelInstruction, setConstraintsForLayout(constraints, 0,1));
+        constraints.gridwidth = 1;
 
 
-        buttonGroup.add(radioLoadFile);
-        buttonGroup.add(radioInternalshortcuts);
-        radioInternalshortcuts.setFocusable(false);
-        radioLoadFile.setFocusable(false);
-        setConstraintsForLayout(constraints, 0,2);
-        panel.add(radioInternalshortcuts, constraints);
-        setConstraintsForLayout(constraints, 0,3);
-        panel.add(radioLoadFile, constraints);
+        buttonExit.setFocusable(false);
+        buttonStartSkip.setFocusable(false);
+        panel.add(buttonStartSkip, setConstraintsForLayout(constraints, 0,2));
+        panel.add(buttonShow, setConstraintsForLayout(constraints, 1,2));
+        panel.add(buttonExit, setConstraintsForLayout(constraints, 2,2));
 
 
-
-        jLabel.addMouseListener(new MouseListener() {
+        buttonStartSkip.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                newRandom();
+                if (checkIfAnyTagIsEnabled()){
+                    newRandom();
+                    buttonStartSkip.setText("Pomiń skrót");
+                    buttonShow.setText("Pokaż odpowiedź");
+                    buttonShow.setVisible(true);
+                    jLabelInstruction.setVisible(false);
+                } else {
+                    jLabelInstruction.setText("Musisz wybrać przynajmniej jedną kategorię!");
+                    jLabelInstruction.setVisible(true);
+
+                }
+
+
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+
+            }
+        });
+
+        buttonShow.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                jLabelInstruction.setVisible(true);
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+
+            }
+        });
+
+        buttonExit.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                System.exit(0);
             }
 
             @Override
@@ -96,7 +170,6 @@ public class Main implements KeyListener {
 
 
         window.addKeyListener(this);
-        //panel.addKeyListener(this);
 
 
         window.setVisible(true); // TODO odblokuj na true
@@ -138,6 +211,7 @@ public class Main implements KeyListener {
             commandsTable = new String[nodeList.getLength()];
             keyMacTable = new String[nodeList.getLength()];
             keyWinTable = new String[nodeList.getLength()];
+            tagsTable = new String[nodeList.getLength()];
 
             for (int i=0; i < nodeList.getLength(); i++){
                 Node node = nodeList.item(i);
@@ -154,11 +228,9 @@ public class Main implements KeyListener {
                     commandsTable[i] = command;
                     keyMacTable[i] = macKey;
                     keyWinTable[i] = winKey;
+                    tagsTable[i] = tag;
 
                     // wszystkie parametry z XML do hashMaps
-                    commands.add(command);
-                    winKeys.add(winKey);
-                    macKeys.add(macKey);
                     tags.add(tag);
                     String[] currentTags = tag.split(", ");
 
@@ -169,8 +241,9 @@ public class Main implements KeyListener {
                                 tagUnique = false;
                             }
                         }
-                        if (tagUnique){
+                        if (tagUnique && currentTags[b] != ""){
                             tagsList.add(currentTags[b]); // jeśli to pierwsze wystąpienie tego taga, to dodaj go do mapy
+                            tagsCheckboxList.add(new JCheckBox(currentTags[b]));
                         }
                     }
                 }
@@ -178,6 +251,34 @@ public class Main implements KeyListener {
             for (String s : tagsList) {
                 System.out.println(s);
             }
+            setConstraintsForLayout(constraints, -1,4);
+            for (JCheckBox checkBox : tagsCheckboxList){
+                checkBox.setFocusable(false);
+                checkBox.setSelected(true);
+                panel.add(checkBox, setConstraintsForLayout(constraints));
+
+                checkBox.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        if (e.getModifiers() == 24){
+                            for (JCheckBox checkBoxModify : tagsCheckboxList){
+                                checkBoxModify.setSelected(checkBox.isSelected());
+                            }
+                        }
+                    }
+                });
+            }
+            constraints.gridy += 1;
+            constraints.gridx = 0;
+            constraints.gridwidth = 3;
+            JLabel podpis1 = new JLabel("Program stworzony na potrzeby AMFN w Bydgoszczy.");
+            panel.add(podpis1,constraints);
+            constraints.gridy += 1;
+            JLabel podpis2 = new JLabel("Copyright Bartłomiej Majewicz 2024.");
+            panel.add(podpis2,constraints);
+
+            window.pack();
+            window.repaint();
 
         } catch (SAXException | IOException e) {
             throw new RuntimeException(e);
@@ -213,8 +314,10 @@ public class Main implements KeyListener {
 
         // klawisze opisane tekstem
         keyNrAscii[61] = "equals";
+        keyNrAscii[45] = "minus";
         keyNrAscii[46] = "period";
         keyNrAscii[222] = "quote";
+        keyNrAscii[9] = "tab";
         keyNrAscii[10] = "return";
 
         int a = 0;
@@ -225,7 +328,7 @@ public class Main implements KeyListener {
         }
 
         // TODO add numpad keycodes
-        // TODO add page up down
+        // TODO add page up / down keycodes
 
     }
 
@@ -255,7 +358,6 @@ public class Main implements KeyListener {
                     keySum+=a;
                 }
             }
-            System.out.println(individualKey);
         }
         System.out.print(modifierSum);
         System.out.print(" = ");
@@ -268,18 +370,56 @@ public class Main implements KeyListener {
     }
 
     void newRandom(){
-        Random random = new Random();
-        currentGuessId = random.nextInt(commandsTable.length);
-        while (Objects.equals(keyMacTable[currentGuessId], "")){
-            currentGuessId = random.nextInt(commandsTable.length);
-        }
-        jLabel.setText(commandsTable[currentGuessId]);
-        jLabel1.setText(keyMacTable[currentGuessId]);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Random random = new Random();
+                currentGuessId = random.nextInt(commandsTable.length);
+                while (Objects.equals(keyMacTable[currentGuessId], "") || !checkTag(currentGuessId)){
+                    currentGuessId = random.nextInt(commandsTable.length);
+                }
+                jLabelTitle.setText(commandsTable[currentGuessId]);
+                jLabelInstruction.setText(keyMacTable[currentGuessId]);
+            }
+        }).start();
+
     }
 
-    void setConstraintsForLayout(GridBagConstraints gridBagConstraints, int x, int y){
+    boolean checkTag(int selectedShortcutId){
+        for (JCheckBox jCheckBox : tagsCheckboxList){
+            String[] currentTags = tagsTable[selectedShortcutId].split(", ");
+            for (String tag : currentTags){
+                if (Objects.equals(jCheckBox.getText(), tag) && jCheckBox.isSelected()){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    boolean checkIfAnyTagIsEnabled(){
+        for (JCheckBox jCheckBox : tagsCheckboxList){
+            if (jCheckBox.isSelected()){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    GridBagConstraints setConstraintsForLayout(GridBagConstraints gridBagConstraints, int x, int y){
         gridBagConstraints.gridx = x;
         gridBagConstraints.gridy = y;
+        return gridBagConstraints;
+    }
+    GridBagConstraints setConstraintsForLayout(GridBagConstraints gridBagConstraints){
+        if (gridBagConstraints.gridx == 2){
+            gridBagConstraints.gridy += 1;
+            gridBagConstraints.gridx = 0;
+        } else {
+            gridBagConstraints.gridx += 1;
+        }
+
+        return gridBagConstraints;
     }
 
 
@@ -292,17 +432,14 @@ public class Main implements KeyListener {
     @Override
     public void keyPressed(KeyEvent e) {
         if (checkCorrect(e, currentGuessId)){
+            jLabelInstruction.setVisible(false);
             newRandom();
         }
-//        System.out.print(e.getKeyChar());// mogą być problemy z enterami, spacjami etc.
-//        System.out.print(" - ");
         System.out.print(e.getModifiersEx()); // ctrl 128; opt 512; cmd 256; shift 64
         System.out.print(" - ");
         System.out.print(e.getExtendedKeyCode()); // to jest kod klawisza
         System.out.print(" - ");
         System.out.print(e.getKeyCode()); // to jest dobre - nie zmienia się niezależnie od modyfikatorów
-//        String nazwa = Character.getName(e.getKeyChar());
-//        System.out.print(nazwa);
         System.out.println();
     }
 
@@ -310,6 +447,5 @@ public class Main implements KeyListener {
     public void keyReleased(KeyEvent e) {
 
     }
+// TODO odrzucić "commands focus" chociaż i tak działa
 }
-
-// TODO odrzucić "commands focus"
