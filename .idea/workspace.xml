@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="39c2af90-a95f-4640-8ba4-7fa9ec441843" name="Changes" comment="base window + runnable implemented">
+    <list default="true" id="39c2af90-a95f-4640-8ba4-7fa9ec441843" name="Changes" comment="hashmap podmienione na arrayList">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
     </list>
@@ -58,11 +58,31 @@
       <option name="project" value="LOCAL" />
       <updated>1711560125688</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="hashmap podmienione na arrayList">
+      <option name="closed" value="true" />
+      <created>1711561873918</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1711561873918</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="base window + runnable implemented" />
-    <option name="LAST_COMMIT_MESSAGE" value="base window + runnable implemented" />
+    <MESSAGE value="hashmap podmienione na arrayList" />
+    <option name="LAST_COMMIT_MESSAGE" value="hashmap podmienione na arrayList" />
   </component>
 </project>

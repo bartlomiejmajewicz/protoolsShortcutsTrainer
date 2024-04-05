@@ -9,38 +9,94 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import java.awt.event.*;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
-import java.util.Objects;
-import java.util.regex.Pattern;
 
 public class Main implements KeyListener {
+
 
     List<String> commands = new ArrayList<>();
     List<String> winKeys = new ArrayList<>();
     List<String> macKeys = new ArrayList<>();
     List<String> tags = new ArrayList<>();
     List<String> tagsList = new ArrayList<>();
-    List <Boolean> macCmdPress = new ArrayList<>();
-    List<Boolean> macOptPress = new ArrayList<>();
-    List<Boolean> macCtrlPress = new ArrayList<>();
-    List<Boolean> macShiftPress = new ArrayList<>();
+
+    String[] keyNrAscii = new String[256];
+
+
+    String[] commandsTable;
+    String[] keyMacTable;
+    String[] keyWinTable;
+    int currentGuessId=0;
+
+    JLabel jLabel = new JLabel("HELLO");
+    JLabel jLabel1 = new JLabel("");
+    GridBagConstraints constraints = new GridBagConstraints();
 
 
     Main(){
+
         JFrame window = new JFrame();
         JPanel panel = new JPanel();
+        JRadioButton radioInternalshortcuts = new JRadioButton();
+        JRadioButton radioLoadFile = new JRadioButton();
+        ButtonGroup buttonGroup = new ButtonGroup();
 
         window.setLocationRelativeTo(null);
         window.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         window.add(panel);
+
+        panel.setLayout(new GridBagLayout());
         panel.setPreferredSize(new Dimension(500,500));
+        setConstraintsForLayout(constraints, 0,0);
+        panel.add(jLabel, constraints);
+        setConstraintsForLayout(constraints, 0,1);
+        panel.add(jLabel1, constraints);
+
+
+        buttonGroup.add(radioLoadFile);
+        buttonGroup.add(radioInternalshortcuts);
+        radioInternalshortcuts.setFocusable(false);
+        radioLoadFile.setFocusable(false);
+        setConstraintsForLayout(constraints, 0,2);
+        panel.add(radioInternalshortcuts, constraints);
+        setConstraintsForLayout(constraints, 0,3);
+        panel.add(radioLoadFile, constraints);
+
+
+
+        jLabel.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                newRandom();
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+
+            }
+        });
+
 
         window.addKeyListener(this);
-
+        //panel.addKeyListener(this);
 
 
         window.setVisible(true); // TODO odblokuj na true
@@ -51,6 +107,7 @@ public class Main implements KeyListener {
             @Override
             public void run() {
                 loadDefaultDataFromXml();
+                fillTheKeyboardMap();
             }
         }).start();
 
@@ -78,10 +135,9 @@ public class Main implements KeyListener {
             Element root = doc.getDocumentElement();
             NodeList nodeList = root.getElementsByTagName("Binding");
 
-            Pattern pCmdPress = Pattern.compile(".*Command.*");
-            Pattern pShiftPress = Pattern.compile(".*Shift.*");
-            Pattern pOptPress = Pattern.compile(".*Option.*");
-            Pattern pControlPress = Pattern.compile(".*Control.*");
+            commandsTable = new String[nodeList.getLength()];
+            keyMacTable = new String[nodeList.getLength()];
+            keyWinTable = new String[nodeList.getLength()];
 
             for (int i=0; i < nodeList.getLength(); i++){
                 Node node = nodeList.item(i);
@@ -91,44 +147,36 @@ public class Main implements KeyListener {
                     String winKey = element.getElementsByTagName("WindowsKey").item(0).getTextContent();
                     String macKey = element.getElementsByTagName("MacKey").item(0).getTextContent();
                     String tag = element.getElementsByTagName("Tags").item(0).getTextContent();
+                    macKey = macKey.toLowerCase();
+                    winKey = winKey.toLowerCase();
+
+                    // wszystkie parametry z XML do tablic
+                    commandsTable[i] = command;
+                    keyMacTable[i] = macKey;
+                    keyWinTable[i] = winKey;
+
                     // wszystkie parametry z XML do hashMaps
                     commands.add(command);
                     winKeys.add(winKey);
                     macKeys.add(macKey);
                     tags.add(tag);
-                    boolean tagUnique = true;
-                    for (int a=0; a < tagsList.size(); a++){
-                        if (Objects.equals(tagsList.get(a), tag)){
-                            tagUnique = false;
+                    String[] currentTags = tag.split(", ");
+
+                    for (int b=0; b< currentTags.length; b++){
+                        boolean tagUnique = true;
+                        for (int a=0; a < tagsList.size(); a++){
+                            if (Objects.equals(tagsList.get(a), currentTags[b])){
+                                tagUnique = false;
+                            }
+                        }
+                        if (tagUnique){
+                            tagsList.add(currentTags[b]); // jeśli to pierwsze wystąpienie tego taga, to dodaj go do mapy
                         }
                     }
-                    if (tagUnique){
-                        tagsList.add(tag); // jeśli to pierwsze wystąpienie tego taga, to dodaj go do mapy
-                    }
-
-                    // modyfikatory
-                    if (pCmdPress.matcher(macKey).matches()){
-                        macCmdPress.add(true);
-                    } else {
-                        macCmdPress.add(false);
-                    }
-                    if (pShiftPress.matcher(macKey).matches()){
-                        macShiftPress.add(true);
-                    } else {
-                        macShiftPress.add(false);
-                    }
-                    if (pOptPress.matcher(macKey).matches()){
-                        macOptPress.add( true);
-                    } else {
-                        macOptPress.add(false);
-                    }
-                    if (pControlPress.matcher(macKey).matches()){
-                        macCtrlPress.add(true);
-                    } else {
-                        macCtrlPress.add(false);
-                    }
-
                 }
+            }
+            for (String s : tagsList) {
+                System.out.println(s);
             }
 
         } catch (SAXException | IOException e) {
@@ -137,22 +185,124 @@ public class Main implements KeyListener {
     }
 
 
+    private void fillTheKeyboardMap(){
+
+        // fill all
+        for (int a=0;a<256;a++){
+            keyNrAscii[a] = Character.getName(((char) a)).toLowerCase();
+            keyNrAscii[a] = keyNrAscii[a].replace("digit ", "");
+            keyNrAscii[a] = keyNrAscii[a].replace("latin capital letter ", "");
+        }
+        for (int a=33;a<58;a++){
+            keyNrAscii[a] = Character.toString(((char) a)).toLowerCase();
+        }
+        for (int a=91;a<94;a++){
+            keyNrAscii[a] = Character.toString(((char) a)).toLowerCase();
+        }
+
+        // F1-F12
+        for (int a=112;a<124;a++){
+            keyNrAscii[a] = "f"+(a-111);
+        }
+
+        //arrows
+        keyNrAscii[37] = "left arrow";
+        keyNrAscii[38] = "up arrow";
+        keyNrAscii[39] = "right arrow";
+        keyNrAscii[40] = "down arrow";
+
+        // klawisze opisane tekstem
+        keyNrAscii[61] = "equals";
+        keyNrAscii[46] = "period";
+        keyNrAscii[222] = "quote";
+        keyNrAscii[10] = "return";
+
+        int a = 0;
+        for (String keyDesc : keyNrAscii){
+            System.out.print(a+" ");
+            System.out.println(keyDesc);
+            a++;
+        }
+
+        // TODO add numpad keycodes
+        // TODO add page up down
+
+    }
+
+    boolean checkCorrect(KeyEvent ke, int functionId){
+        String[] macKeyIndividual = keyMacTable[functionId].split(" \\+ ");
+        int modifierSum = 0; // ctrl 128; opt 512; cmd 256; shift 64
+        int keySum = 0;
+        for (String individualKey : macKeyIndividual){
+            if (Objects.equals(individualKey, "shift")){
+                modifierSum+=64;
+                continue;
+            }
+            if (Objects.equals(individualKey, "control")){
+                modifierSum+=128;
+                continue;
+            }
+            if (Objects.equals(individualKey, "option")){
+                modifierSum+=512;
+                continue;
+            }
+            if (Objects.equals(individualKey, "command")){
+                modifierSum+=256;
+                continue;
+            }
+            for (int a=0; a<keyNrAscii.length;a++){
+                if (Objects.equals(keyNrAscii[a], individualKey)){
+                    keySum+=a;
+                }
+            }
+            System.out.println(individualKey);
+        }
+        System.out.print(modifierSum);
+        System.out.print(" = ");
+        System.out.println(keySum);
+        if (ke.getModifiersEx() == modifierSum && ke.getKeyCode() == keySum){
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    void newRandom(){
+        Random random = new Random();
+        currentGuessId = random.nextInt(commandsTable.length);
+        while (Objects.equals(keyMacTable[currentGuessId], "")){
+            currentGuessId = random.nextInt(commandsTable.length);
+        }
+        jLabel.setText(commandsTable[currentGuessId]);
+        jLabel1.setText(keyMacTable[currentGuessId]);
+    }
+
+    void setConstraintsForLayout(GridBagConstraints gridBagConstraints, int x, int y){
+        gridBagConstraints.gridx = x;
+        gridBagConstraints.gridy = y;
+    }
+
+
+
     // KEYBOARD LISTENER
     @Override
     public void keyTyped(KeyEvent e) {
-
     }
 
     @Override
     public void keyPressed(KeyEvent e) {
-        // TUTAJ nie czytają się skróty z CMD o dziwo
-        System.out.print(e.getKeyChar());// mogą być problemy z enterami, spacjami etc.
-        System.out.print(" - ");
+        if (checkCorrect(e, currentGuessId)){
+            newRandom();
+        }
+//        System.out.print(e.getKeyChar());// mogą być problemy z enterami, spacjami etc.
+//        System.out.print(" - ");
         System.out.print(e.getModifiersEx()); // ctrl 128; opt 512; cmd 256; shift 64
         System.out.print(" - ");
         System.out.print(e.getExtendedKeyCode()); // to jest kod klawisza
         System.out.print(" - ");
-        System.out.print(e.getKeyCode()); // TODO to jest dobre - nie zmienia się niezależnie od modyfikatorów
+        System.out.print(e.getKeyCode()); // to jest dobre - nie zmienia się niezależnie od modyfikatorów
+//        String nazwa = Character.getName(e.getKeyChar());
+//        System.out.print(nazwa);
         System.out.println();
     }
 
@@ -161,3 +311,5 @@ public class Main implements KeyListener {
 
     }
 }
+
+// TODO odrzucić "commands focus"
