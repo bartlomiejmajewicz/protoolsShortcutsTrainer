@@ -7,7 +7,6 @@ import org.xml.sax.SAXException;
 import javax.swing.*;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.IOException;
@@ -37,8 +36,11 @@ public class ProToolsTrainerMain implements KeyListener {
     GridBagConstraints constraints = new GridBagConstraints();
     JButton buttonShow;
 
+    public static void main(String[] args){
+        new ProToolsTrainerMain(null);
+    }
 
-    ProToolsTrainerMain(){
+    ProToolsTrainerMain(String filename){
 
         window = new JFrame();
         panel = new JPanel();
@@ -60,6 +62,7 @@ public class ProToolsTrainerMain implements KeyListener {
 
         panel.setLayout(new GridBagLayout());
         panel.setPreferredSize(new Dimension(500,500));
+//        window.setLocation((Toolkit.getDefaultToolkit().getScreenSize().width/2)-500, (Toolkit.getDefaultToolkit().getScreenSize().height/2)-500);
         setConstraintsForLayout(constraints,0,0);
         constraints.gridwidth = 3;
         constraints.weighty = 2;
@@ -77,9 +80,9 @@ public class ProToolsTrainerMain implements KeyListener {
         panel.add(buttonExit, setConstraintsForLayout(constraints, 2,2));
 
 
-        buttonStartSkip.addMouseListener(new MouseListener() {
+        buttonStartSkip.addActionListener(new ActionListener() {
             @Override
-            public void mouseClicked(MouseEvent e) {
+            public void actionPerformed(ActionEvent e) {
                 if (checkIfAnyTagIsEnabled()){
                     newRandom();
                     buttonStartSkip.setText("Pomiń skrót");
@@ -91,82 +94,20 @@ public class ProToolsTrainerMain implements KeyListener {
                     jLabelInstruction.setVisible(true);
 
                 }
-
-
-            }
-
-            @Override
-            public void mousePressed(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-
             }
         });
 
-        buttonShow.addMouseListener(new MouseListener() {
+        buttonShow.addActionListener(new ActionListener() {
             @Override
-            public void mouseClicked(MouseEvent e) {
+            public void actionPerformed(ActionEvent e) {
                 jLabelInstruction.setVisible(true);
             }
-
-            @Override
-            public void mousePressed(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-
-            }
         });
 
-        buttonExit.addMouseListener(new MouseListener() {
+        buttonExit.addActionListener(new ActionListener() {
             @Override
-            public void mouseClicked(MouseEvent e) {
+            public void actionPerformed(ActionEvent e) {
                 System.exit(0);
-            }
-
-            @Override
-            public void mousePressed(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-
             }
         });
 
@@ -181,7 +122,7 @@ public class ProToolsTrainerMain implements KeyListener {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                loadDefaultDataFromXml();
+                loadDefaultDataFromXml(filename);
                 fillTheKeyboardMap();
             }
         }).start();
@@ -189,20 +130,28 @@ public class ProToolsTrainerMain implements KeyListener {
 
     }
 
-    private void loadDefaultDataFromXml(){
 
-        String fileName = "src/Keyboard Shortcuts.xml";
+
+    private void loadDefaultDataFromXml(String filenameFromSelect){
+        String fileLocation;
+        if (filenameFromSelect == null){
+            fileLocation = "src/Keyboard Shortcuts.xml";
+        } else {
+            fileLocation = filenameFromSelect;
+        }
+
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         dbf.setValidating(true);
         DocumentBuilder db;
         try {
             db = dbf.newDocumentBuilder();
-        } catch (ParserConfigurationException e) {
+        } catch (Exception e) {
+            jLabelInstruction.setText("Niestety wystąpił błąd: "+e.toString());
             throw new RuntimeException(e);
         }
 
         try {
-            Document doc = db.parse(fileName);
+            Document doc = db.parse(fileLocation);
             Element root = doc.getDocumentElement();
             NodeList nodeList = root.getElementsByTagName("Binding");
 
@@ -312,11 +261,58 @@ public class ProToolsTrainerMain implements KeyListener {
 
         // klawisze opisane tekstem
         keyNrAscii[61] = "equals";
+        keyNrAscii[44] = "comma";
         keyNrAscii[45] = "minus";
         keyNrAscii[46] = "period";
         keyNrAscii[222] = "quote";
         keyNrAscii[9] = "tab";
         keyNrAscii[10] = "return";
+
+        // numpad number keys
+        keyNrAscii[96] = "numpad 0";
+        keyNrAscii[97] = "numpad 1";
+        keyNrAscii[98] = "numpad 2";
+        keyNrAscii[99] = "numpad 3";
+        keyNrAscii[100] = "numpad 4";
+        keyNrAscii[101] = "numpad 5";
+        keyNrAscii[102] = "numpad 6";
+        keyNrAscii[103] = "numpad 7";
+        keyNrAscii[104] = "numpad 8";
+        keyNrAscii[105] = "numpad 9";
+
+        // numpad others
+        keyNrAscii[110] = "numpad period";
+        keyNrAscii[111] = "Numpad /";
+        //keyNrAscii[10] = "numpad enter"; // TODO nie działa, bo ma ten sam kod, co return...
+        keyNrAscii[109] = "numpad minus";
+        keyNrAscii[107] = "numpad plus";
+        //keyNrAscii[] = "numpad equals"; // TODO nie znam kodu
+        keyNrAscii[106] = "numpad *";
+
+        // F keys
+        keyNrAscii[112] = "f1";
+        keyNrAscii[113] = "f2";
+        keyNrAscii[114] = "f3";
+        keyNrAscii[115] = "f4";
+        keyNrAscii[116] = "f5";
+        keyNrAscii[117] = "f6";
+        keyNrAscii[118] = "f7";
+        keyNrAscii[119] = "f8";
+        keyNrAscii[120] = "f9";
+        keyNrAscii[121] = "f10";
+        keyNrAscii[122] = "f11";
+        keyNrAscii[123] = "f12";
+
+        // PAGES
+        keyNrAscii[33] = "page up";
+        keyNrAscii[34] = "page down";
+        keyNrAscii[35] = "end";
+        keyNrAscii[36] = "home";
+        keyNrAscii[127] = "delete";
+
+
+
+
 
         int a = 0;
         for (String keyDesc : keyNrAscii){
