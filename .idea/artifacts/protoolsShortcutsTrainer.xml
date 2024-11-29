@@ -1,0 +1,19 @@
+<component name="ArtifactManager">
+  <artifact type="jpackage" name="protoolsShortcutsTrainer">
+    <output-path>$PROJECT_DIR$/out/artifacts/protoolsShortcutsTrainer</output-path>
+    <properties id="jpackage-properties">
+      <options>
+        <option name="version" value="" />
+        <option name="copyright" value="" />
+        <option name="description" value="" />
+        <option name="vendor" value="" />
+        <option name="mainClass" value="Main" />
+      </options>
+    </properties>
+    <root id="root">
+      <element id="archive" name="protoolsShortcutsTrainer.jar">
+        <element id="module-output" name="protoolsShortcutsTrainer" />
+      </element>
+    </root>
+  </artifact>
+</component>

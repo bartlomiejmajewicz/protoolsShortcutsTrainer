@@ -135,7 +135,7 @@ public class ProToolsTrainerMain implements KeyListener {
     private void loadDefaultDataFromXml(String filenameFromSelect){
         String fileLocation;
         if (filenameFromSelect == null){
-            fileLocation = "src/Keyboard Shortcuts.xml";
+            fileLocation = "src/main/resources/Keyboard Shortcuts.xml";
         } else {
             fileLocation = filenameFromSelect;
         }
