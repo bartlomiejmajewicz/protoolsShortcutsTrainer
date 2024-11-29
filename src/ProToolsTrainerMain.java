@@ -195,9 +195,6 @@ public class ProToolsTrainerMain implements KeyListener {
                     }
                 }
             }
-            for (String s : tagsList) {
-                System.out.println(s);
-            }
             setConstraintsForLayout(constraints, -1,4);
             for (JCheckBox checkBox : tagsCheckboxList){
                 checkBox.setFocusable(false);
@@ -316,8 +313,6 @@ public class ProToolsTrainerMain implements KeyListener {
 
         int a = 0;
         for (String keyDesc : keyNrAscii){
-            System.out.print(a+" ");
-            System.out.println(keyDesc);
             a++;
         }
 
@@ -353,9 +348,6 @@ public class ProToolsTrainerMain implements KeyListener {
                 }
             }
         }
-        System.out.print(modifierSum);
-        System.out.print(" = ");
-        System.out.println(keySum);
         if (ke.getModifiersEx() == modifierSum && ke.getKeyCode() == keySum){
             return true;
         } else {
@@ -429,17 +421,10 @@ public class ProToolsTrainerMain implements KeyListener {
             jLabelInstruction.setVisible(false);
             newRandom();
         }
-        System.out.print(e.getModifiersEx()); // ctrl 128; opt 512; cmd 256; shift 64
-        System.out.print(" - ");
-        System.out.print(e.getExtendedKeyCode()); // to jest kod klawisza
-        System.out.print(" - ");
-        System.out.print(e.getKeyCode()); // to jest dobre - nie zmienia się niezależnie od modyfikatorów
-        System.out.println();
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
 
     }
-// TODO odrzucić "commands focus" chociaż i tak działa
 }

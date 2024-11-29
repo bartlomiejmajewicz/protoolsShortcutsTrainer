@@ -4,10 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="39c2af90-a95f-4640-8ba4-7fa9ec441843" name="Changes" comment="Main program przeniesiony do osobnej klasy">
+    <list default="true" id="39c2af90-a95f-4640-8ba4-7fa9ec441843" name="Changes" comment="Dodane kolejne znaki specjalnie ascii">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/EntryMenu.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/EntryMenu.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/ProToolsTrainerMain.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ProToolsTrainerMain.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -46,7 +44,7 @@
     "project.structure.last.edited": "Artifacts",
     "project.structure.proportion": "0.0",
     "project.structure.side.proportion": "0.2",
-    "settings.editor.selected.configurable": "preferences.lookFeel"
+    "settings.editor.selected.configurable": "org.jetbrains.plugins.github.ui.GithubSettingsConfigurable"
   }
 }]]></component>
   <component name="RunManager" selected="Application.Main">
@@ -68,6 +66,13 @@
       <item itemvalue="Application.Main" />
       <item itemvalue="Application.MainWindow" />
     </list>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="jdk-21.0.2-openjdk-21.0.2-4caba194b151-322ed176" />
+      </set>
+    </attachedChunks>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
@@ -118,7 +123,15 @@
       <option name="project" value="LOCAL" />
       <updated>1712855580954</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="Dodane kolejne znaki specjalnie ascii">
+      <option name="closed" value="true" />
+      <created>1718040102113</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1718040102113</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -138,6 +151,7 @@
     <MESSAGE value="rozpoznaje skróty, powalcz z UI i wczytaniem własnego pliku" />
     <MESSAGE value="NA" />
     <MESSAGE value="Main program przeniesiony do osobnej klasy" />
-    <option name="LAST_COMMIT_MESSAGE" value="Main program przeniesiony do osobnej klasy" />
+    <MESSAGE value="Dodane kolejne znaki specjalnie ascii" />
+    <option name="LAST_COMMIT_MESSAGE" value="Dodane kolejne znaki specjalnie ascii" />
   </component>
 </project>
